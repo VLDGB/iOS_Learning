@@ -13,9 +13,11 @@ class URLProvider {
     
     let loginURL: URL
     let signUpURL: URL
+    let profileURL: URL
     
     private init() {
         loginURL = baseURL.appendingPathComponent("auth/login")
         signUpURL = baseURL.appendingPathComponent("users")
+        profileURL = baseURL.appendingPathComponent("auth/profile")
     }
 }

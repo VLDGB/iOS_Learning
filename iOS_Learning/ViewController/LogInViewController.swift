@@ -9,17 +9,18 @@ import UIKit
 
 class LogInViewController: UIViewController {
     
+    @IBOutlet var loginView: UIView!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var errorLabel: UILabel!
     
     private let loginService = UNLoginService()
+    private let loadingOverlay = LoadingOverlay().shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
         setUpElements()
     }
     
@@ -66,10 +67,15 @@ class LogInViewController: UIViewController {
     }
     
     private func login() {
+        loadingOverlay.showOverlay(view: loginView)
+
         loginService.login(
             email: emailTextField.text ?? "",
             password: passwordTextField.text ?? ""
         ) { authenticationResponse in
+            
+            self.loadingOverlay.hideOverlayView()
+            
             switch authenticationResponse {
             case .success:
                 self.transitionToHome()

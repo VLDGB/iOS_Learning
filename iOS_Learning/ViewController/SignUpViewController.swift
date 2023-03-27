@@ -9,6 +9,7 @@ import UIKit
 
 class SignUpViewController: UIViewController {
     
+    @IBOutlet var signUpView: UIView!
     @IBOutlet weak var firstNameTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
@@ -16,11 +17,11 @@ class SignUpViewController: UIViewController {
     @IBOutlet weak var errorLabel: UILabel!
     
     private let signUpService: SignUpService = UNSignUpService()
+    private let loginOverlay = LoadingOverlay().shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
         setUpElements()
     }
     
@@ -68,11 +69,15 @@ class SignUpViewController: UIViewController {
     }
     
     private func signUp() {
+        loginOverlay.showOverlay(view: signUpView)
         signUpService.signUp(
             name: firstNameTextField.text ?? "",
             email: emailTextField.text ?? "",
             password: passwordTextField.text ?? ""
         ) { response in
+            
+            self.loginOverlay.hideOverlayView()
+            
             switch response {
             case .success:
                 self.transitionToHome()

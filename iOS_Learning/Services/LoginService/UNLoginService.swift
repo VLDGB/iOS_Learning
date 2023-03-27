@@ -12,6 +12,8 @@ class UNLoginService: LoginService {
     private let restClient = UNRestClient()
     private let decoder = JSONDecoder()
     private let tokenHandler = UserDefaults.TokenHandler.self
+    private let userHandler = UserDefaults.UserHandler.self
+
     
     func login(email: String, password: String, complition: @escaping (AuthenticationResponse) -> Void) {
         let loginPayload = LoginPayload(email: email, password: password)
@@ -38,8 +40,10 @@ class UNLoginService: LoginService {
                         refreshToken: loginResponse.refreshToken
                     )
                     
-                    let authenticationResponse = AuthenticationResponse.success
-                    complition(authenticationResponse)
+                    
+                    self.saveCurrentUser { saveCurrentUserResponse in
+                        complition(saveCurrentUserResponse)
+                    }
                 } catch {
                     let authenticationResponse = AuthenticationResponse.failure(AuthenticationResponse.Error.unknown)
                     complition(authenticationResponse)
@@ -49,6 +53,46 @@ class UNLoginService: LoginService {
                 complition(authenticationResponse)
             }
         })
+    }
+    
+    func saveCurrentUser(complition: @escaping (AuthenticationResponse) -> Void) {
+        let profileURL = URLProvider.shared.profileURL
+        guard let request = URLRequest.RequestBuilder.build(url: profileURL, httpMethod: HttpMethod.get, useAccessToken: true) else {
+            let authenticationResponse = AuthenticationResponse.failure(AuthenticationResponse.Error.unknown)
+            complition(authenticationResponse)
+            return
+        }
+        
+        restClient.send(urlRequest: request) { result in
+            switch result {
+            case .success(let unwrappedData):
+                do {
+                    guard let wrappedData = unwrappedData else {
+                        complition(AuthenticationResponse.failure(AuthenticationResponse.Error.unknown))
+                        return
+                    }
+                    
+                    let signUpResponse = try self.decoder.decode(SignUpResponse.self, from: wrappedData)
+                    let user = User(signUpResponse)
+                
+                    guard self.userHandler.saveUser(user: user) else {
+                        
+                        complition(AuthenticationResponse.failure(AuthenticationResponse.Error.failedToSaveUser))
+                        return
+                    }
+                    
+                    let authenticationResponse = AuthenticationResponse.success
+                    complition(authenticationResponse)
+                } catch {
+                    
+                    let authenticationResponse = AuthenticationResponse.failure(AuthenticationResponse.Error.unknown)
+                    complition(authenticationResponse)
+                }
+            case .failure(let error):
+                let authenticationResponse = AuthenticationResponse(error)
+                complition(authenticationResponse)
+            }
+        }
     }
     
     private func saveTokens(accessToken: String, refreshToken: String) {
