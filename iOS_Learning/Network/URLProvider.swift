@@ -5,10 +5,12 @@
 //  Created by Vlad_Rosca on 24.03.2023.
 //
 
-import Foundation
+import Foundation.NSURL
 
-class URLProvider {
+struct URLProvider {
+    
     static let shared = URLProvider()
+    
     private var baseURL: URL! = URL(string: "https://api.escuelajs.co/api/v1/")
     
     let loginURL: URL

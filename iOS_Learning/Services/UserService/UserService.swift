@@ -1,28 +1,30 @@
 //
-//  UNSignUpService.swift
+//  UserService.swift
 //  iOS_Learning
 //
-//  Created by Vlad_Rosca on 27.03.2023.
+//  Created by Vlad_Rosca on 30.03.2023.
 //
 
 import Foundation.NSJSONSerialization
 import Resolver
 
-class SignUpService: SignUpServiceProtocol {
+class UserService: UserServiceProtocol {
     
     @Injected private var restClient: RestClientProtocol
     
     private let decoder = JSONDecoder().ISO8601DateDecodingStrategySetup()
     
-    func signUp(name: String, email: String, password: String, completion: @escaping (Result<User, ErrorCause>) -> Void) {
+    func getCurrentUser(completion: @escaping (Result<User, ErrorCause>) -> Void) {
         do {
-            let request = try SignUpRequestBuilder.standard.build(name: name, email: email, password: password)
+            let request = try UserReqestBuilder.shared.build()
+            
             restClient.send(urlRequest: request) { [weak self] result in
                 switch result {
                 case .success(let data):
                     self?.decodeUserResponse(data: data, completion: completion)
                 case .failure(let error):
-                    completion(.failure(error))
+                    let errorCause = ErrorCause(error)
+                    completion(.failure(errorCause))
                 }
             }
         } catch {

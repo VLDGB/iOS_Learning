@@ -131,9 +131,8 @@
                     <navigationItem key="navigationItem" id="2rl-on-1FS"/>
                     <connections>
                         <outlet property="emailTextField" destination="zUx-RQ-s1u" id="HMu-x4-fi7"/>
-                        <outlet property="errorLabel" destination="Vri-8f-8av" id="F8P-s6-4UV"/>
+                        <outlet property="errorLabel" destination="Vri-8f-8av" id="eXv-Jr-BKc"/>
                         <outlet property="loginButton" destination="A6l-pp-fOx" id="Ohf-tG-f70"/>
-                        <outlet property="loginView" destination="ads-NA-cto" id="dRN-Ji-46V"/>
                         <outlet property="passwordTextField" destination="2Xg-xh-bsA" id="M2N-vQ-Lkz"/>
                     </connections>
                 </viewController>
@@ -165,6 +164,9 @@
                             <constraint firstItem="B5Q-85-ioa" firstAttribute="leading" secondItem="VcV-wS-eRp" secondAttribute="leading" id="rE1-xp-iYx"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="welcomeLabel" destination="B5Q-85-ioa" id="HCA-ND-DI6"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ydl-Cq-VG2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -240,10 +242,9 @@
                     <connections>
                         <outlet property="emailTextField" destination="zY4-nD-Xz1" id="YZ4-Xv-nOL"/>
                         <outlet property="errorLabel" destination="fbt-Va-U2k" id="LLk-ny-uBa"/>
-                        <outlet property="firstNameTextField" destination="SXB-Sz-s3U" id="T8v-DI-aYa"/>
+                        <outlet property="nameTextField" destination="SXB-Sz-s3U" id="T8v-DI-aYa"/>
                         <outlet property="passwordTextField" destination="e19-dc-4OS" id="gE1-V6-3vG"/>
                         <outlet property="signUpButton" destination="a6B-rr-bQX" id="8KD-a1-6bW"/>
-                        <outlet property="signUpView" destination="MIA-QU-Qyj" id="2N6-TI-OLs"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YKi-iK-yhT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

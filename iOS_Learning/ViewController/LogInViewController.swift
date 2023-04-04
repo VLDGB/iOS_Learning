@@ -6,17 +6,18 @@
 //
 
 import UIKit
+import Resolver
 
 class LogInViewController: UIViewController {
     
-    @IBOutlet var loginView: UIView!
-    @IBOutlet weak var emailTextField: UITextField!
-    @IBOutlet weak var passwordTextField: UITextField!
-    @IBOutlet weak var loginButton: UIButton!
-    @IBOutlet weak var errorLabel: UILabel!
+    @Injected private var loginManager: LoginManagerProtocol
     
-    private let loginService = UNLoginService()
-    private let loadingOverlay = LoadingOverlay().shared
+    @IBOutlet private weak var emailTextField: UITextField!
+    @IBOutlet private weak var passwordTextField: UITextField!
+    @IBOutlet private weak var loginButton: UIButton!
+    @IBOutlet private weak var errorLabel: UILabel!
+    
+    private let loadingOverlay = LoadingOverlay.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,13 +26,8 @@ class LogInViewController: UIViewController {
     }
     
     @IBAction func loginButtonTapped(_ sender: UIButton) {
-        let error = validateFields()
-        
-        if error != nil {
-            showError(error!)
-        } else {
-            login()
-        }
+        guard let error = validateFields() else { return login() }
+        showError(error)
     }
     
     private func transitionToHome() {
@@ -45,6 +41,37 @@ class LogInViewController: UIViewController {
     
     private func setUpElements() {
         errorLabel.alpha = 0
+        emailTextField.placeholder = LocalizedStrings.email
+        passwordTextField.placeholder = LocalizedStrings.password
+        loginButton.titleLabel?.text = LocalizedStrings.login
+    }
+    
+    private func validateFields() -> String? {
+        
+        let isAnyTextFieldEmpty = [emailTextField, passwordTextField].contains { textField in
+            Utils.isTextFieldEmpty(textField)
+        }
+        
+        if  isAnyTextFieldEmpty {
+            return LocalizedStrings.pleaseFillInAllFields
+        }
+        
+        guard let cleanedPassword = passwordTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) else {
+            showErrorAlert(
+                title: LocalizedStrings.pleaseMakeSureYourPasswordMeetsTheRequirements,
+                message: ""
+            ) { action in
+                // do nothing
+            }
+            
+            return nil
+        }
+        
+        guard Utils.isPasswordValid(password: cleanedPassword) else {
+            return LocalizedStrings.pleaseMakeSureYourPasswordMeetsTheRequirements
+        }
+        
+        return nil
     }
     
     private func showError(_ error: String) {
@@ -52,39 +79,47 @@ class LogInViewController: UIViewController {
         errorLabel.alpha = 1
     }
     
-    private func validateFields() -> String? {
-        if emailTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" ||
-            passwordTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-            return "Plase fill in all field"
-        }
+    private func showErrorAlert(title: String, message: String, onDismiss: @escaping (UIAlertAction) -> Void) {
+        let dismissAlertAction = UIAlertAction(title: LocalizedStrings.dismiss, style: .cancel, handler: onDismiss)
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(dismissAlertAction)
         
-        let cleanedPassword = passwordTextField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
-        if Utilities.isPasswordValid(password: cleanedPassword) == false {
-            return "Please make sure your password meets the requirements"
-        }
-        
-        return nil
+        self.present(alert, animated: true)
     }
     
     private func login() {
-        loadingOverlay.showOverlay(view: loginView)
-
-        loginService.login(
-            email: emailTextField.text ?? "",
-            password: passwordTextField.text ?? ""
-        ) { authenticationResponse in
+        loadingOverlay.showOverlay(view: view)
+        
+        guard let email = emailTextField.text, let password = passwordTextField.text else {
+            showErrorAlert(title: LocalizedStrings.somethingWentWrong, message: "") { action in
+                // do nothing
+            }
+            return
+        }
+        
+        loginManager.login(
+            email: email,
+            password: password
+        ) { [weak self] result in
             
-            self.loadingOverlay.hideOverlayView()
-            
-            switch authenticationResponse {
-            case .success:
-                self.transitionToHome()
-            case .failure(let error):
-                switch error {
-                case .wrongCreedentiales:
-                    self.showError("Wrong Credentiales")
-                default:
-                    self.showError("Something went wrong")
+            DispatchQueue.main.async {
+                self?.loadingOverlay.hideOverlayView()
+                
+                switch result {
+                case .success:
+                    self?.transitionToHome()
+                case .failure(let error):
+                    switch error {
+                    case .accessDenied:
+                        self?.showErrorAlert(title: LocalizedStrings.wrongCredentials, message: "") { action in
+                            // do nothing
+                        }
+                        
+                    default:
+                        self?.showErrorAlert(title: LocalizedStrings.somethingWentWrong, message: "") { action in
+                            // do nothing
+                        }
+                    }
                 }
             }
         }
