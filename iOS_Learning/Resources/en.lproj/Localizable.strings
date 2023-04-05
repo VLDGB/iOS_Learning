@@ -1,0 +1,11 @@
+"LOGIN" = "Login";
+"SIGNUP" = "SignUp";
+"EMAIL" = "email";
+"NAME" = "name";
+"PASSWORD" = "password";
+"DISMISS" = "Dismiss";
+"WELCOME" = "Welcome";
+"PLEASE_FILL_IN_ALL_FIELDS" = "Plase fill in all fields";
+"PLEASE_MAKE_SURE_YOUR_PASSWORD_MEETS_THE_REQUIREMENTS" = "Please make sure your password meets the requirements";
+"WRONG_CREDENTIALS" = "Wrong Credentials";
+"SOMETHING_WENT_WRONG" = "Something went wrong";

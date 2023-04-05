@@ -1,12 +1,13 @@
 //
-//  Network.swift
+//  RestClientProtocol.swift
 //  iOS_Learning
 //
 //  Created by Vlad_Rosca on 23.03.2023.
 //
 
-import Foundation
+import Foundation.NSData
 
-protocol RestClient {
+protocol RestClientProtocol {
+    
     func send(urlRequest: URLRequest, completion: @escaping (Result<Data?, ErrorCause>) -> Void)
 }

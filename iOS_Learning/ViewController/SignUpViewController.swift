@@ -6,38 +6,36 @@
 //
 
 import UIKit
+import Resolver
 
 class SignUpViewController: UIViewController {
     
-    @IBOutlet weak var firstNameTextField: UITextField!
-    @IBOutlet weak var emailTextField: UITextField!
-    @IBOutlet weak var passwordTextField: UITextField!
-    @IBOutlet weak var signUpButton: UIButton!
-    @IBOutlet weak var errorLabel: UILabel!
+    @IBOutlet private weak var nameTextField: UITextField!
+    @IBOutlet private weak var emailTextField: UITextField!
+    @IBOutlet private weak var passwordTextField: UITextField!
+    @IBOutlet private weak var signUpButton: UIButton!
+    @IBOutlet private weak var errorLabel: UILabel!
     
-    private let signUpService: SignUpService = UNSignUpService()
+    @Injected private var signUpManager: SignUpManagerProtocol
+    
+    private var loginOverlay = LoadingOverlay.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
         setUpElements()
     }
     
     @IBAction func signUpButtonTapped(_ sender: UIButton) {
-        let error = validateFields()
-        
-        if error != nil {
-            showError(error!)
-        } else {
-            signUp()
-        }
+        guard let error = validateFields() else { return signUp() }
+        showError(error)
     }
     
     private func transitionToHome() {
         
         let homeViewController =
-        storyboard?.instantiateViewController(withIdentifier: Constants.Storyboard.homeViewController) as? HomeViewController
+        storyboard?
+            .instantiateViewController(withIdentifier: Constants.Storyboard.homeViewController) as? HomeViewController
         
         view.window?.rootViewController = homeViewController
         view.window?.makeKeyAndVisible()
@@ -45,18 +43,35 @@ class SignUpViewController: UIViewController {
     
     private func setUpElements() {
         errorLabel.alpha = 0
+        nameTextField.placeholder = LocalizedStrings.name
+        emailTextField.placeholder = LocalizedStrings.email
+        passwordTextField.placeholder = LocalizedStrings.password
+        signUpButton.titleLabel?.text = LocalizedStrings.signUp
     }
     
     private func validateFields() -> String? {
-        if firstNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" ||
-            emailTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" ||
-            passwordTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-            return "Plase fill in all field"
+        
+        let isAnyTextFieldEmpty = [nameTextField, emailTextField, passwordTextField].contains { textField in
+            Utils.isTextFieldEmpty(textField)
         }
         
-        let cleanedPassword = passwordTextField.text!.trimmingCharacters(in: .whitespacesAndNewlines)
-        if Utilities.isPasswordValid(password: cleanedPassword) == false {
-            return "Please make sure your password meets the requirements"
+        if  isAnyTextFieldEmpty {
+            return LocalizedStrings.pleaseFillInAllFields
+        }
+        
+        guard let cleanedPassword = passwordTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) else {
+            showErrorAlert(
+                title: LocalizedStrings.pleaseMakeSureYourPasswordMeetsTheRequirements,
+                message: ""
+            ) { action in
+                // do nothing
+            }
+            
+            return nil
+        }
+        
+        guard Utils.isPasswordValid(password: cleanedPassword) else {
+            return LocalizedStrings.pleaseMakeSureYourPasswordMeetsTheRequirements
         }
         
         return nil
@@ -67,17 +82,41 @@ class SignUpViewController: UIViewController {
         errorLabel.alpha = 1
     }
     
+    private func showErrorAlert(title: String, message: String, onDismiss: @escaping (UIAlertAction) -> Void) {
+        let dismissAlertAction = UIAlertAction(title: LocalizedStrings.dismiss, style: .cancel, handler: onDismiss)
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(dismissAlertAction)
+        
+        self.present(alert, animated: true)
+    }
+    
     private func signUp() {
-        signUpService.signUp(
-            name: firstNameTextField.text ?? "",
-            email: emailTextField.text ?? "",
-            password: passwordTextField.text ?? ""
-        ) { response in
-            switch response {
-            case .success:
-                self.transitionToHome()
-            case .failure:
-                self.showError("Something went wrong")
+        loginOverlay.showOverlay(view: view)
+        
+        guard let name = nameTextField.text, let email = emailTextField.text, let password = passwordTextField.text else {
+            showErrorAlert(title: LocalizedStrings.somethingWentWrong, message: "") { action in
+                // do nothing
+            }
+            return
+        }
+        
+        signUpManager.signUp(
+            name: name,
+            email: email,
+            password: password
+        ) { [weak self] response in
+            
+            DispatchQueue.main.async {
+                self?.loginOverlay.hideOverlayView()
+                
+                switch response {
+                case .success:
+                    self?.transitionToHome()
+                case .failure:
+                    self?.showErrorAlert(title: LocalizedStrings.somethingWentWrong, message: "") { action in
+                        // do nothing
+                    }
+                }
             }
         }
     }

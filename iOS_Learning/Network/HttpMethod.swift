@@ -5,9 +5,10 @@
 //  Created by Vlad_Rosca on 23.03.2023.
 //
 
-import Foundation
-
-enum HttpMethod {
-    static let get = "GET"
-    static let post = "POST"
+enum HttpMethod: String {
+    case get = "GET"
+    case post = "POST"
+    case put = "PUT"
+    case patch = "PATCH"
+    case delete = "DELETE"
 }
