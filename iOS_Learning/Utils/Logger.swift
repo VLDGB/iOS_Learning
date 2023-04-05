@@ -7,7 +7,6 @@
 
 import Foundation.NSData
 
-
 func log(
     message: String,
     fileName: String,
