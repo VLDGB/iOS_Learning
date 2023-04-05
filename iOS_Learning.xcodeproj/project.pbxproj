@@ -145,16 +145,15 @@
 		371687ED29D1AD7700B57BFF /* iOS_Learning */ = {
 			isa = PBXGroup;
 			children = (
-				37774DD529DD74500063C564 /* Helpers */,
+				37774DBB29DD74500063C564 /* Utils */,
 				37774DC929DD74500063C564 /* Injection */,
+				37774DC129DD74500063C564 /* Network */,
+				37774D9929DD74500063C564 /* Services */,
 				37774D9229DD744F0063C564 /* Managers */,
 				37774DBE29DD74500063C564 /* Model */,
-				37774DC129DD74500063C564 /* Network */,
-				37774DB829DD74500063C564 /* Resources */,
-				37774D9929DD74500063C564 /* Services */,
-				37774DC729DD74500063C564 /* UserInterface */,
-				37774DBB29DD74500063C564 /* Utils */,
 				37774DCB29DD74500063C564 /* ViewController */,
+				37774DC729DD74500063C564 /* UserInterface */,
+				37774DB829DD74500063C564 /* Resources */,
 				371687EE29D1AD7700B57BFF /* AppDelegate.swift */,
 				371687F029D1AD7700B57BFF /* SceneDelegate.swift */,
 				371687F429D1AD7700B57BFF /* Main.storyboard */,
@@ -177,8 +176,8 @@
 		37774D9329DD744F0063C564 /* SignUpManager */ = {
 			isa = PBXGroup;
 			children = (
-				37774D9429DD744F0063C564 /* SignUpManagerProtocol.swift */,
 				37774D9529DD744F0063C564 /* SignUpManager.swift */,
+				37774D9429DD744F0063C564 /* SignUpManagerProtocol.swift */,
 			);
 			path = SignUpManager;
 			sourceTree = "<group>";
@@ -195,11 +194,11 @@
 		37774D9929DD74500063C564 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				37774DA229DD74500063C564 /* Utils */,
+				37774DAE29DD74500063C564 /* Model */,
 				37774D9A29DD74500063C564 /* SignUpService */,
 				37774D9F29DD74500063C564 /* StorageService */,
-				37774DA229DD74500063C564 /* Utils */,
 				37774DA829DD74500063C564 /* UserService */,
-				37774DAE29DD74500063C564 /* Model */,
 				37774DB129DD74500063C564 /* LoginService */,
 				37774DB729DD74500063C564 /* JSONDecoder+ISO8601DateDecodingStrategySetup.swift */,
 			);
@@ -209,8 +208,8 @@
 		37774D9A29DD74500063C564 /* SignUpService */ = {
 			isa = PBXGroup;
 			children = (
-				37774D9B29DD74500063C564 /* SignUpServiceProtocol.swift */,
 				37774D9C29DD74500063C564 /* Model */,
+				37774D9B29DD74500063C564 /* SignUpServiceProtocol.swift */,
 				37774D9E29DD74500063C564 /* SignUpService.swift */,
 			);
 			path = SignUpService;
@@ -255,9 +254,9 @@
 		37774DA829DD74500063C564 /* UserService */ = {
 			isa = PBXGroup;
 			children = (
-				37774DA929DD74500063C564 /* UserService.swift */,
 				37774DAA29DD74500063C564 /* Model */,
 				37774DAD29DD74500063C564 /* UserServiceProtocol.swift */,
+				37774DA929DD74500063C564 /* UserService.swift */,
 			);
 			path = UserService;
 			sourceTree = "<group>";
@@ -290,8 +289,8 @@
 		37774DB129DD74500063C564 /* LoginService */ = {
 			isa = PBXGroup;
 			children = (
-				37774DB229DD74500063C564 /* LoginServiceProtocol.swift */,
 				37774DB329DD74500063C564 /* Model */,
+				37774DB229DD74500063C564 /* LoginServiceProtocol.swift */,
 				37774DB629DD74500063C564 /* LoginService.swift */,
 			);
 			path = LoginService;
@@ -372,9 +371,9 @@
 			children = (
 				37774DCC29DD74500063C564 /* SignUpViewController.swift */,
 				37774DCD29DD74500063C564 /* ViewController.swift */,
-				37774DCE29DD74500063C564 /* String+Localized.swift */,
 				37774DCF29DD74500063C564 /* HomeViewController.swift */,
 				37774DD029DD74500063C564 /* LogInViewController.swift */,
+				37774DCE29DD74500063C564 /* String+Localized.swift */,
 				37774DD129DD74500063C564 /* Helpers */,
 			);
 			path = ViewController;
@@ -388,14 +387,6 @@
 				37774DD429DD74500063C564 /* Utils.swift */,
 			);
 			path = Helpers;
-			sourceTree = "<group>";
-		};
-		37774DD529DD74500063C564 /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Helpers;
-			path = ../../../../../../Desktop/copy/Helpers;
 			sourceTree = "<group>";
 		};
 		B4EC5985B8F0BE341602D295 /* Pods */ = {
