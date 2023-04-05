@@ -8,5 +8,6 @@ target 'iOS_Learning' do
   # Pods for iOS_Learning
 
 pod 'Alamofire'
+pod 'Resolver'
 
 end

@@ -5,15 +5,25 @@
 //  Created by Vlad_Rosca on 27.03.2023.
 //
 
-import Foundation
+import Foundation.NSData
 
-struct Logger {
-    
-    static func log(message: String, data: Data? = nil) -> Void {
-        if let wrappedData = data {
-            print("\(message)  with payload:  \(String(data: wrappedData, encoding: .utf8) ?? "Error: Could not convert data to string")")
-        } else {
-            print(message)
-        }
+func log(
+    message: String,
+    fileName: String,
+    functionName: String
+) {
+    print("\(fileName) - \(functionName) - \(message)")
+}
+
+func log(
+    message: String,
+    fileName: String,
+    functionName: String,
+    payload: Data?
+) {
+    if let payload = payload, let payloadString = String(data: payload, encoding: .utf8) {
+        print("\(fileName) - \(functionName) - \(message)  - with payload: \(payloadString)))")
+    } else {
+        print("\(fileName) - \(functionName) - \(message) - unable to convert payload to string")
     }
 }
